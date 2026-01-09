@@ -1,0 +1,64 @@
+﻿<Window x:Class="SystemMonitor.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        Title="System &amp; Network Analyzer" Height="750" Width="1000" Background="#1E1E1E">
+    <Grid Margin="20">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1.2*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0">
+            <Border Background="#2D2D2D" CornerRadius="10" Padding="15" Margin="0,0,0,15">
+                <StackPanel>
+                    <TextBlock Text="HARDWARE" Foreground="#007AFF" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="CPU" Foreground="White" FontSize="11"/>
+                    <ProgressBar x:Name="CpuBar" Height="10" Margin="0,5,0,15" Foreground="#007AFF" Background="#444" BorderThickness="0"/>
+                    <TextBlock Text="RAM" Foreground="White" FontSize="11"/>
+                    <ProgressBar x:Name="RamBar" Height="10" Margin="0,5,0,0" Foreground="#4CAF50" Background="#444" BorderThickness="0"/>
+                </StackPanel>
+            </Border>
+
+            <Border Background="#2D2D2D" CornerRadius="10" Padding="15">
+                <StackPanel>
+                    <TextBlock Text="NETWORK" Foreground="#FFCC00" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Wi-Fi Signal" Foreground="White" FontSize="11"/>
+                    <ProgressBar x:Name="WifiBar" Height="10" Margin="0,5,0,10" Foreground="#FFCC00" Background="#444" BorderThickness="0"/>
+                    <TextBlock x:Name="NetSpeedText" Text="0.00 Mbps" Foreground="#00CCFF" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,10"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+
+        <Grid Grid.Column="1" Margin="15,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="1.5*"/>
+                <RowDefinition Height="1*"/>
+                <RowDefinition Height="1*"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="#2D2D2D" CornerRadius="10" Padding="10" Margin="0,0,0,10">
+                <DockPanel>
+                    <TextBlock DockPanel.Dock="Top" Text="Active Processes" Foreground="White" Margin="5"/>
+                    <Button DockPanel.Dock="Bottom" Content="End Task" Click="KillProcess_Click" Background="#FF3B30" Foreground="White" Margin="0,5,0,0" BorderThickness="0" Height="25"/>
+                    <ListBox x:Name="ProcessList" DisplayMemberPath="ProcessName" Background="Transparent" Foreground="#BBB" BorderThickness="0"/>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="1" Background="#2D2D2D" CornerRadius="10" Padding="10" Margin="0,0,0,10">
+                <DockPanel>
+                    <Button x:Name="BtnScan" DockPanel.Dock="Bottom" Content="Scan Network Devices" Click="ScanBtn_Click" Background="#007AFF" Foreground="White" BorderThickness="0" Height="25"/>
+                    <ListBox x:Name="DeviceListBox" Background="Transparent" Foreground="#AAA" BorderThickness="0"/>
+                </DockPanel>
+            </Border>
+
+            <Border Grid.Row="2" Background="#2D2D2D" CornerRadius="10" Padding="5">
+                <lvc:CartesianChart AnimationsSpeed="0:0:0.5" Hoverable="False">
+                    <lvc:CartesianChart.Series>
+                        <lvc:LineSeries Values="{Binding CpuChartValues}" PointGeometry="{x:Null}" Stroke="#007AFF" Fill="#22007AFF"/>
+                    </lvc:CartesianChart.Series>
+                </lvc:CartesianChart>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
