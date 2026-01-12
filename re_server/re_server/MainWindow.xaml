@@ -1,0 +1,120 @@
+﻿<Window x:Class="re_server.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        xmlns:local="clr-namespace:re_server"
+        mc:Ignorable="d"
+         Title="통합 관제 및 보안 관리 서버" 
+        Height="900" Width="1350" Background="#F0F2F5">
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 상단 -->
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                Background="White" CornerRadius="12" Padding="15" Margin="0,0,0,15">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="보안 서버 가동" Width="130" Height="35"
+                            Background="#1D1D1F" Foreground="White" FontWeight="Bold"
+                            Command="{Binding StartServerCommand}"/>
+
+                    <Ellipse Width="10" Height="10" Margin="10,0,0,0"
+                             Fill="{Binding ServerStatusBrush}"/>
+
+                    <TextBlock Text="{Binding StatusText}" VerticalAlignment="Center"
+                               Foreground="#666" FontWeight="Bold" Margin="5,0,0,0"/>
+                </StackPanel>
+
+                <TextBlock Text="SECURITY MONITORING SYSTEM v1.2"
+                           VerticalAlignment="Center" HorizontalAlignment="Right"
+                           Foreground="#AAA" FontSize="12"/>
+            </DockPanel>
+        </Border>
+
+        <!-- 좌측 - 성능 모니터링 -->
+        <Border Grid.Row="1" Grid.Column="0" Background="White" CornerRadius="12" Padding="15">
+            <ScrollViewer>
+                <StackPanel>
+                    <TextBlock Text="📊 시스템 리소스" FontSize="18" FontWeight="Bold"/>
+
+                    <TextBlock Text="CPU 사용량" FontWeight="Bold" Margin="0,12,0,5"/>
+                    <ProgressBar Value="{Binding CpuUsage}" Maximum="100" Height="18" Foreground="#FF4B2B"/>
+                    <TextBlock Text="{Binding CpuUsage, StringFormat={}{0:F1}%}"
+                               HorizontalAlignment="Right" FontSize="11" Margin="0,2,0,15"/>
+
+                    <TextBlock Text="메모리 사용량" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ProgressBar Value="{Binding RamUsagePercent}" Maximum="100" Height="18" Foreground="#FFB75E"/>
+                    <TextBlock Text="{Binding RamText}" HorizontalAlignment="Right" FontSize="11" Margin="0,2,0,15"/>
+
+                    <TextBlock Text="네트워크 속도" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <Border Background="#E3F2FD" CornerRadius="8" Padding="10" Margin="0,0,0,25">
+                        <TextBlock Text="{Binding NetMbps, StringFormat={}{0:F2} Mbps}"
+                                   HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"
+                                   Foreground="#1976D2"/>
+                    </Border>
+
+                    <Separator Margin="0,10,0,10"/>
+
+                    <TextBlock Text="CPU 사용 이력" FontSize="13" Margin="0,0,0,5"/>
+                    <lvc:CartesianChart Height="100" DisableAnimations="True">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding CpuChartValues}" Stroke="#f44336" PointGeometry="{x:Null}"/>
+                        </lvc:CartesianChart.Series>
+                    </lvc:CartesianChart>
+
+                    <TextBlock Text="네트워크 이력" FontSize="13" Margin="10,10,0,5"/>
+                    <lvc:CartesianChart Height="100" DisableAnimations="True">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding NetChartValues}" Stroke="#2979ff" PointGeometry="{x:Null}"/>
+                        </lvc:CartesianChart.Series>
+                    </lvc:CartesianChart>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <!-- 중간 - 클라이언트 목록 -->
+        <Border Grid.Row="1" Grid.Column="1" Background="White" CornerRadius="12" Padding="15" Margin="10,0,10,0">
+            <DockPanel>
+                <TextBlock Text="👥 접속 사용자" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <ListBox ItemsSource="{Binding Clients}"
+                         SelectedItem="{Binding SelectedClient}"
+                         BorderThickness="0"/>
+            </DockPanel>
+        </Border>
+
+        <!-- 우측 - 웹뷰 -->
+        <Border Grid.Row="1" Grid.Column="2" Background="White" CornerRadius="12" Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="{Binding SelectedClientIpText}" FontSize="14" FontWeight="Bold" Margin="5,0,0,10"/>
+                <wv2:WebView2 x:Name="MyWebView" Grid.Row="1"/>
+            </Grid>
+        </Border>
+
+        <!-- 하단 - 보안 키워드 -->
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                Background="#FFF3F3" CornerRadius="12" Padding="15" Margin="0,15,0,0">
+            <DockPanel>
+                <TextBlock Text="🚫 보안 차단 키워드:" FontWeight="Bold" Foreground="#C0392B"/>
+                <TextBox Text="{Binding ForbiddenKeywordsText}" Margin="10,0,0,0"
+                         Width="500" Background="White"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
