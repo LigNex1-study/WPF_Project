@@ -19,7 +19,8 @@
         <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="White" CornerRadius="12" Padding="15" Margin="0,0,0,15">
             <DockPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Button Content="보안 서버 가동" Click="StartServer_Click" Width="130" Height="35" Background="#1D1D1F" Foreground="White" FontWeight="Bold"/>
+                    <Button x:Name="StartServerBtn" Content="보안 서버 가동" Click="StartServer_Click" Width="130" Height="35" Background="#1D1D1F" Foreground="White" FontWeight="Bold" Margin="0,0,10,0"/>
+                    <Button x:Name="StopServerBtn" Content="서버 중지" Click="StopServer_Click" Width="100" Height="35" Background="#C0392B" Foreground="White" FontWeight="Bold" IsEnabled="False" Margin="0,0,10,0"/>
                     <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="Red" VerticalAlignment="Center"/>
                     <TextBlock x:Name="StatusText" Text="서버 중지됨" VerticalAlignment="Center" Foreground="#666" FontWeight="Bold" Margin="5,0,0,0"/>
                 </StackPanel>
@@ -92,7 +93,7 @@
         <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="#FFF3F3" CornerRadius="12" Padding="15" Margin="0,15,0,0">
             <DockPanel>
                 <TextBlock Text="🚫 보안 차단 키워드: " VerticalAlignment="Center" FontWeight="Bold" Foreground="#C0392B" Margin="0,0,10,0"/>
-                <TextBox x:Name="ForbiddenUrlInput" Text="youtube.com, facebook.com, twitter.com" Padding="8" VerticalAlignment="Center" Background="White" BorderBrush="#FFCACA"/>
+                <TextBox x:Name="ForbiddenUrlInput" Text="youtube.com, facebook.com, twitter.com" Padding="8" VerticalAlignment="Center" Background="White" BorderBrush="#FFCACA" TextChanged="ForbiddenUrlInput_TextChanged"/>
             </DockPanel>
         </Border>
     </Grid>
