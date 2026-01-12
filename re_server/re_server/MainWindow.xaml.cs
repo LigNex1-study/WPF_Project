@@ -20,6 +20,8 @@ namespace re_server
     {
         private readonly MainViewModel _vm;
 
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -30,14 +32,19 @@ namespace re_server
                 new SecurityPolicyService()
             );
 
-            _vm.RequestNavigate += url =>
+            _vm.RequestNavigate += async url =>
             {
                 try
                 {
-                    if (MyWebView.CoreWebView2 != null)
-                        MyWebView.CoreWebView2.Navigate(url);
+                    if (MyWebView.CoreWebView2 == null)
+                        await MyWebView.EnsureCoreWebView2Async();
+
+                    MyWebView.CoreWebView2.Navigate(url);
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("[WebView Error] " + ex.Message);
+                }
             };
 
             _vm.AlertRequested += msg =>
@@ -52,5 +59,9 @@ namespace re_server
         {
             await MyWebView.EnsureCoreWebView2Async();
         }
+
+
     }
+
+
 }

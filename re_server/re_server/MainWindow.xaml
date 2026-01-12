@@ -7,7 +7,7 @@
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         xmlns:local="clr-namespace:re_server"
         mc:Ignorable="d"
-         Title="통합 관제 및 보안 관리 서버" 
+        Title="통합 관제 및 보안 관리 서버" 
         Height="900" Width="1350" Background="#F0F2F5">
     <Grid Margin="15">
         <Grid.ColumnDefinitions>
@@ -84,14 +84,26 @@
             </ScrollViewer>
         </Border>
 
-        <!-- 중간 - 클라이언트 목록 -->
+        <!-- 중간 - 클라이언트 목록 (수정 적용됨) -->
         <Border Grid.Row="1" Grid.Column="1" Background="White" CornerRadius="12" Padding="15" Margin="10,0,10,0">
-            <DockPanel>
-                <TextBlock Text="👥 접속 사용자" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
-                <ListBox ItemsSource="{Binding Clients}"
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- 텍스트 -->
+                    <RowDefinition Height="*"/>
+                    <!-- 전체 ListBox -->
+                </Grid.RowDefinitions>
+
+                <TextBlock Text="👥 접속 사용자"
+                           FontSize="16" FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Clients}"
                          SelectedItem="{Binding SelectedClient}"
-                         BorderThickness="0"/>
-            </DockPanel>
+                         BorderThickness="0"
+                         ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+            </Grid>
         </Border>
 
         <!-- 우측 - 웹뷰 -->
