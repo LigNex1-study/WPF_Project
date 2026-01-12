@@ -18,7 +18,7 @@ namespace re_server.Services
 
             var keywords = forbiddenText
                 .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(k => k.Trim().ToLowerInvariant())
+                .Select(k => k.Trim().ToLowerInvariant()) 
                 .Where(k => !string.IsNullOrEmpty(k));
 
             foreach (var k in keywords)
