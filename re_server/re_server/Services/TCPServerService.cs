@@ -28,6 +28,8 @@ namespace re_server.Services
             _listener.Start();
             _running = true;
 
+            Console.WriteLine($"[SERVER] Start Listening {port}");
+
             while (_running)
             {
                 try
@@ -69,6 +71,8 @@ namespace re_server.Services
                     if (read == 0) break;
 
                     var msg = Encoding.UTF8.GetString(buffer, 0, read).Trim();
+                    Console.WriteLine($"[RECV] {ip} => {msg}");
+
                     ClientMessageReceived?.Invoke(ip, msg);
                 }
             }
@@ -76,6 +80,7 @@ namespace re_server.Services
             {
                 _clients.TryRemove(ip, out _);
                 ClientDisconnected?.Invoke(ip);
+                Console.WriteLine($"[DISCONNECT] {ip}");
 
                 try { client.Close(); } catch { }
             }

@@ -169,26 +169,46 @@ namespace re_server.ViewModels
 
         private void OnClientMessageReceived(string ip, string message)
         {
+            Console.WriteLine($"[RECV] {ip} => {message}");
+            System.Diagnostics.Debug.WriteLine($"[RECV] {ip} => {message}");
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 var client = Clients.FirstOrDefault(c => c.Ip == ip);
                 if (client == null) return;
 
-                client.Url = message.Trim().ToLower();
+                // 1) URL 정규화
+                var url = message.Trim().ToLower();
 
+                if (string.IsNullOrWhiteSpace(url))
+                    return;
+
+                // UI Automation 값 필터링 (한국어/영어 대응)
+                if (url.Contains("검색") || url.Contains("입력") || url.Contains("search"))
+                    return;
+
+                // 스킴 강제
+                if (!url.StartsWith("http://") && !url.StartsWith("https://"))
+                    url = "https://" + url;
+
+                client.Url = url;
+
+                // 2) 선택된 클라이언트면 화면 변경
                 if (SelectedClient?.Ip == ip)
                 {
                     RequestNavigate?.Invoke(client.Url);
                     OnPropertyChanged(nameof(SelectedClientUrl));
                 }
 
-                if (_securityPolicyService.Check(message, ForbiddenKeywordsText, out var keyword))
+                // 3) 보안 체크
+                if (_securityPolicyService.Check(url, ForbiddenKeywordsText, out var keyword))
                 {
-                    AlertRequested?.Invoke($"[차단 감지]\n사용자: {ip}\n주소: {message}\n키워드: {keyword}");
+                    AlertRequested?.Invoke($"[차단 감지]\n사용자: {ip}\n주소: {url}\n키워드: {keyword}");
                     _serverService.SendMessage(ip, $"ALERT: [{keyword}] 접속 감지됨. 종료하세요!");
                 }
             });
         }
+
 
         private void OnPerformanceUpdated(PerformanceData data)
         {
