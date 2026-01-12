@@ -1,0 +1,20 @@
+﻿<Window x:Class="WpfApp4.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="감시 클라이언트" Height="250" Width="400" Background="#F5F5F5">
+    <Grid Margin="20">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="🖥️ 서버 연결 설정" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+            <TextBlock Text="서버 IP 주소:" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding ServerIp, UpdateSourceTrigger=PropertyChanged}" Padding="8" Margin="0,0,0,15"/>
+
+            <Button x:Name="ConnectBtn" Content="서버에 연결하여 감시 시작" 
+                    Click="ConnectBtn_Click" IsEnabled="{Binding CanConnect}"
+                    Height="45" Background="#2196F3" Foreground="White" FontWeight="Bold">
+            </Button>
+
+            <TextBlock Text="{Binding Status}" Margin="0,15,0,0" HorizontalAlignment="Center" Foreground="Gray"/>
+        </StackPanel>
+    </Grid>
+</Window>

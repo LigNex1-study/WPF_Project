@@ -1,0 +1,99 @@
+﻿<Window x:Class="WpfApp5.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="통합 관제 및 보안 관리 서버" Height="900" Width="1350" Background="#F0F2F5">
+    <Grid Margin="15">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="320"/>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Background="White" CornerRadius="12" Padding="15" Margin="0,0,0,15">
+            <DockPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="보안 서버 가동" Click="StartServer_Click" Width="130" Height="35" Background="#1D1D1F" Foreground="White" FontWeight="Bold"/>
+                    <Ellipse x:Name="StatusDot" Width="10" Height="10" Fill="Red" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="StatusText" Text="서버 중지됨" VerticalAlignment="Center" Foreground="#666" FontWeight="Bold" Margin="5,0,0,0"/>
+                </StackPanel>
+                <TextBlock Text="SECURITY MONITORING SYSTEM v1.2" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#AAA" FontSize="12"/>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="0" Background="White" CornerRadius="12" Padding="15" Margin="0,0,10,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <TextBlock Text="📊 시스템 리소스" FontSize="18" FontWeight="Bold"/>
+
+                    <TextBlock Text="CPU 프로세서 사용량" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ProgressBar x:Name="CpuBar" Height="18" Foreground="#FF4B2B" Maximum="100"/>
+                    <TextBlock x:Name="CpuText" Text="0%" HorizontalAlignment="Right" FontSize="11" Margin="0,2,0,15"/>
+
+                    <TextBlock Text="메모리(RAM) 사용량" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <ProgressBar x:Name="RamBar" Height="18" Foreground="#FFB75E" Maximum="100"/>
+                    <TextBlock x:Name="RamText" Text="0/0 GB" HorizontalAlignment="Right" FontSize="11" Margin="0,2,0,15"/>
+
+                    <TextBlock Text="와이파이(Network) 속도" FontWeight="Bold" Margin="0,0,0,5"/>
+                    <Border Background="#E3F2FD" Padding="10" CornerRadius="8" Margin="0,0,0,25">
+                        <TextBlock x:Name="NetText" Text="0.0 Mbps" FontSize="18" FontWeight="Bold" Foreground="#1976D2" HorizontalAlignment="Center"/>
+                    </Border>
+
+                    <Separator Margin="0,5,0,20"/>
+                    <TextBlock Text="📈 실시간 분석 그래프" FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                    <TextBlock Text="[CPU 사용률 이력]" FontSize="11" Foreground="#666" Margin="0,0,0,5"/>
+                    <lvc:CartesianChart Height="100" DisableAnimations="True" Margin="0,0,0,15">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding CpuChartValues}" PointGeometry="{x:Null}" Stroke="#FF4B2B" Fill="#11FF4B2B" StrokeThickness="2"/>
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis ShowLabels="False"/>
+                        </lvc:CartesianChart.AxisX>
+                    </lvc:CartesianChart>
+
+                    <TextBlock Text="[네트워크 트래픽 이력]" FontSize="11" Foreground="#666" Margin="0,0,0,5"/>
+                    <lvc:CartesianChart Height="100" DisableAnimations="True">
+                        <lvc:CartesianChart.Series>
+                            <lvc:LineSeries Values="{Binding NetChartValues}" PointGeometry="{x:Null}" Stroke="#1976D2" Fill="#111976D2" StrokeThickness="2"/>
+                        </lvc:CartesianChart.Series>
+                        <lvc:CartesianChart.AxisX>
+                            <lvc:Axis ShowLabels="False"/>
+                        </lvc:CartesianChart.AxisX>
+                    </lvc:CartesianChart>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="1" Background="White" CornerRadius="12" Padding="15" Margin="0,0,10,0">
+            <DockPanel>
+                <TextBlock DockPanel.Dock="Top" Text="👥 접속 사용자" FontSize="16" FontWeight="Bold" Margin="0,0,0,15"/>
+                <ListBox x:Name="ClientListBox" SelectionChanged="ClientListBox_SelectionChanged" BorderThickness="0"/>
+            </DockPanel>
+        </Border>
+
+        <Border Grid.Row="1" Grid.Column="2" Background="White" CornerRadius="12" Padding="10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="DetailHeader" Text="모니터링 대상을 선택하세요" FontSize="14" FontWeight="Bold" Margin="5,0,0,10"/>
+                <wv2:WebView2 x:Name="MyWebView" Grid.Row="1" Source="about:blank"/>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Background="#FFF3F3" CornerRadius="12" Padding="15" Margin="0,15,0,0">
+            <DockPanel>
+                <TextBlock Text="🚫 보안 차단 키워드: " VerticalAlignment="Center" FontWeight="Bold" Foreground="#C0392B" Margin="0,0,10,0"/>
+                <TextBox x:Name="ForbiddenUrlInput" Text="youtube.com, facebook.com, twitter.com" Padding="8" VerticalAlignment="Center" Background="White" BorderBrush="#FFCACA"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</Window>
