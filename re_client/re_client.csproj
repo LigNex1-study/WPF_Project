@@ -9,8 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3650.58" />
+    <ApplicationDefinition Update="C:\Git\WPF_Project\re_client.xaml" Link="re_client.xaml" />
   </ItemGroup>
 
 </Project>
