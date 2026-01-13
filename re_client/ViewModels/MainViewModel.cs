@@ -23,7 +23,7 @@ namespace WpfApp4.ViewModels
         private DispatcherTimer? _timer;
         private string _lastUrl = "";
 
-        private string _serverIp = "127.0.0.1";
+        private string _serverIp = "192.168.2.156";
         private string _status = "상태: 연결 대기 중";
         private bool _isConnected;
         private bool _isMonitoring;
