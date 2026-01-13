@@ -1,0 +1,184 @@
+﻿<Window x:Class="WpfApp4.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="감시 클라이언트"
+        Height="410" Width="460"
+        Background="#F5F5F5"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <!-- LED 깜빡임 -->
+        <Storyboard x:Key="BlinkStoryboard" RepeatBehavior="Forever">
+            <DoubleAnimation
+                Storyboard.TargetProperty="Opacity"
+                From="1.0"
+                To="0.2"
+                Duration="0:0:0.5"
+                AutoReverse="True"/>
+        </Storyboard>
+
+        <!-- 카드 스타일 -->
+        <Style TargetType="Border" x:Key="Card">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Padding" Value="14"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.14"/>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- 연결 배지 -->
+        <Style TargetType="Border" x:Key="Badge">
+            <Setter Property="CornerRadius" Value="999"/>
+            <Setter Property="Padding" Value="10,4"/>
+            <Setter Property="Background" Value="#9E9E9E"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Right"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                    <Setter Property="Background" Value="#E53935"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+    <Grid Margin="14">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ===== 헤더 ===== -->
+        <Border Style="{StaticResource Card}" Grid.Row="0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- LED (IsConnected 트리거로 깜빡임) -->
+                <Ellipse Width="12" Height="12"
+                         Opacity="1"
+                         Margin="0,0,10,0"
+                         VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Fill" Value="Gray"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                    <Setter Property="Fill" Value="Red"/>
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard x:Name="LedBlink" Storyboard="{StaticResource BlinkStoryboard}"/>
+                                    </DataTrigger.EnterActions>
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="LedBlink"/>
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+
+                <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                    <TextBlock Text="🖥️ 서버 감시 클라이언트" FontSize="18" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Status}" Margin="0,5,0,0" Foreground="#666" FontSize="12"/>
+                </StackPanel>
+
+                <Border Grid.Column="2" Style="{StaticResource Badge}">
+                    <TextBlock Foreground="White" FontWeight="Bold" FontSize="12">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="DISCONNECTED"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsConnected}" Value="True">
+                                        <Setter Property="Text" Value="CONNECTED"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- ===== 연결 설정 ===== -->
+        <Border Style="{StaticResource Card}" Grid.Row="1">
+            <Grid VerticalAlignment="Bottom">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="0,0,12,0">
+                    <TextBlock Text="서버 IP" Foreground="#555" FontSize="12"/>
+                    <TextBox Text="{Binding ServerIp, UpdateSourceTrigger=PropertyChanged}"
+                             Padding="10" Margin="0,6,0,0"/>
+                </StackPanel>
+
+                <Button Grid.Column="1"
+                        Content="{Binding ConnectButtonText}"
+                        Command="{Binding ToggleConnectCommand}"
+                        IsEnabled="{Binding CanToggleConnect}"
+                        Width="120" Height="42"
+                        VerticalAlignment="Bottom"
+                        Background="#2196F3"
+                        Foreground="White"
+                        FontWeight="Bold"/>
+            </Grid>
+        </Border>
+
+        <!-- ===== 로그 ===== -->
+        <Border Style="{StaticResource Card}" Grid.Row="2">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="이벤트 로그" FontSize="15" FontWeight="Bold"/>
+                        <TextBlock Text="연결/URL 전송/ALERT/끊김 이벤트 기록"
+                                   Foreground="#777" FontSize="11" Margin="0,4,0,8"/>
+                    </StackPanel>
+
+                    <Button Grid.Column="1"
+                            Content="{Binding MonitorButtonText}"
+                            Command="{Binding ToggleMonitorCommand}"
+                            IsEnabled="{Binding CanToggleMonitor}"
+                            Height="34" Padding="12,0"
+                            Background="#43A047" Foreground="White"
+                            FontWeight="Bold" Margin="0,6,10,0"/>
+
+                    <Button Grid.Column="2"
+                            Content="로그 지우기"
+                            Command="{Binding ClearLogCommand}"
+                            Height="34" Padding="12,0"
+                            Background="#EEEEEE" Foreground="#333"
+                            FontWeight="Bold" Margin="0,6,0,0"/>
+                </Grid>
+
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Logs}"
+                         FontFamily="Consolas"
+                         FontSize="12"
+                         Background="#FAFAFA"
+                         BorderBrush="#E0E0E0"
+                         BorderThickness="1"
+                         Padding="8"
+                         MinHeight="130"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
